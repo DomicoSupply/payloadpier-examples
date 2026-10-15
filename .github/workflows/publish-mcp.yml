@@ -1,10 +1,7 @@
 name: Verify and publish PayloadPier MCP
+# Public discovery currently blocked by Cloudflare Error 1010 for the runner.
+# Run manually only after the site owner resolves that hosting restriction.
 on:
-  push:
-    branches: [main]
-    paths:
-      - server.json
-      - .github/workflows/publish-mcp.yml
   workflow_dispatch:
 jobs:
   publish:
