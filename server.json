@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.DomicoSupply/payloadpier",
+  "title": "PayloadPier Supplier Price Compare",
+  "description": "Compare supplier price lists for unit-cost and pack-size changes. Paid calls need a scoped API key.",
+  "version": "1.0.0",
+  "websiteUrl": "https://payloadpier.com/docs/mcp",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://payloadpier.com/api/mcp",
+      "headers": [
+        {
+          "name": "X-API-Key",
+          "description": "Your direct PayloadPier API key. supplier-price scope for comparisons; account-read for balance. RapidAPI keys do not work here. Comparison calls are billable.",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
