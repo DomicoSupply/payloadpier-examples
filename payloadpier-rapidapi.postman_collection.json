@@ -1,0 +1,57 @@
+{
+  "info": {
+    "name": "PayloadPier Supplier Price Compare — RapidAPI",
+    "description": "Compare buyer-supplied supplier price lists. Subscribe to a RapidAPI plan first. Set rapidapi_key locally; never publish it. Each Send uses a new operation key and may incur usage charges. No automatic retries. BASIC includes 3 requests/month. PAYG is $0.30/request; monthly plans and separate bandwidth fees/taxes are shown on RapidAPI. This collection is a downloadable integration example, not a Postman Network listing.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "rapidapi_key",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "rapidapi_host",
+      "value": "payloadpier-supplier-price-compare.p.rapidapi.com",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Compare pack-size shrinkage",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-RapidAPI-Key",
+            "value": "{{rapidapi_key}}"
+          },
+          {
+            "key": "X-RapidAPI-Host",
+            "value": "{{rapidapi_host}}"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{$guid}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"old_rows\": [\n    {\n      \"sku\": \"A-100\",\n      \"price\": \"120\",\n      \"currency\": \"USD\",\n      \"price_basis\": \"pack\",\n      \"pack_quantity\": \"12\",\n      \"unit\": \"each\"\n    }\n  ],\n  \"new_rows\": [\n    {\n      \"sku\": \"A-100\",\n      \"price\": \"120\",\n      \"currency\": \"USD\",\n      \"price_basis\": \"pack\",\n      \"pack_quantity\": \"10\",\n      \"unit\": \"each\"\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "https://payloadpier-supplier-price-compare.p.rapidapi.com/api/v1/compare",
+        "description": "A case remains $120 but shrinks from 12 to 10 units. Expected normalized unit cost rises from 10 to 12 (20%). New keys prevent conflicts, not duplicate billing: inspect any uncertain response before sending again."
+      },
+      "response": []
+    }
+  ]
+}
