@@ -1,0 +1,378 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "PayloadPier Supplier Price Compare",
+    "version": "1.0.0",
+    "description": "Compare buyer-supplied supplier price lists by exact SKU. This consumer definition calls the RapidAPI marketplace endpoint; subscribe to a plan and supply your own X-RapidAPI-Key. Each request may count toward usage, including errors/retries. Inputs/results are processed in memory. No scraping, fuzzy matching, FX or order placement.",
+    "contact": {
+      "name": "PayloadPier Support",
+      "email": "support@payloadpier.com",
+      "url": "https://payloadpier.com"
+    },
+    "termsOfService": "https://payloadpier.com/terms"
+  },
+  "servers": [
+    {
+      "url": "https://payloadpier-supplier-price-compare.p.rapidapi.com"
+    }
+  ],
+  "paths": {
+    "/api/v1/compare": {
+      "post": {
+        "operationId": "compareSupplierPrices",
+        "summary": "Compare supplier price lists",
+        "description": "Compare exact SKUs, pack sizes, unit costs, minimum orders and optional margins. Maximum 5,000 rows per snapshot, 2 MiB per file and 5 MiB per request. Use a fresh operation key for each new comparison. Authentication is supplied by RapidAPI; the private proxy secret is never a consumer parameter.",
+        "externalDocs": {
+          "url": "https://payloadpier.com/docs/rapidapi"
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128,
+              "pattern": "^[!-~]+$"
+            },
+            "description": "Unique operation identifier. Preserve after a timeout; recorded repeats return HTTP 409 without replaying the result."
+          },
+          {
+            "name": "X-RapidAPI-Host",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "payloadpier-supplier-price-compare.p.rapidapi.com"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "old_rows",
+                  "new_rows"
+                ],
+                "properties": {
+                  "old_rows": {
+                    "type": "array",
+                    "maxItems": 5000,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "sku",
+                        "price",
+                        "currency",
+                        "price_basis",
+                        "unit"
+                      ],
+                      "properties": {
+                        "sku": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 256
+                        },
+                        "price": {
+                          "type": "string",
+                          "pattern": "^\\d{1,18}(?:\\.\\d{1,18})?$"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "pattern": "^[A-Z]{3}$"
+                        },
+                        "price_basis": {
+                          "type": "string",
+                          "enum": [
+                            "unit",
+                            "pack"
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64
+                        },
+                        "pack_quantity": {
+                          "type": "string",
+                          "pattern": "^\\d{1,18}(?:\\.\\d{1,18})?$"
+                        },
+                        "moq": {
+                          "type": "string",
+                          "pattern": "^\\d{1,18}(?:\\.\\d{1,18})?$"
+                        },
+                        "moq_basis": {
+                          "type": "string",
+                          "enum": [
+                            "unit",
+                            "pack"
+                          ]
+                        },
+                        "source_row": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "description": "Exact case-sensitive SKU. Pack prices require a positive pack_quantity. moq and moq_basis must be provided together. Runtime validation also enforces unique SKUs, matching currencies/units and positive whole pack quantities where required."
+                    }
+                  },
+                  "new_rows": {
+                    "type": "array",
+                    "maxItems": 5000,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "sku",
+                        "price",
+                        "currency",
+                        "price_basis",
+                        "unit"
+                      ],
+                      "properties": {
+                        "sku": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 256
+                        },
+                        "price": {
+                          "type": "string",
+                          "pattern": "^\\d{1,18}(?:\\.\\d{1,18})?$"
+                        },
+                        "currency": {
+                          "type": "string",
+                          "pattern": "^[A-Z]{3}$"
+                        },
+                        "price_basis": {
+                          "type": "string",
+                          "enum": [
+                            "unit",
+                            "pack"
+                          ]
+                        },
+                        "unit": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 64
+                        },
+                        "pack_quantity": {
+                          "type": "string",
+                          "pattern": "^\\d{1,18}(?:\\.\\d{1,18})?$"
+                        },
+                        "moq": {
+                          "type": "string",
+                          "pattern": "^\\d{1,18}(?:\\.\\d{1,18})?$"
+                        },
+                        "moq_basis": {
+                          "type": "string",
+                          "enum": [
+                            "unit",
+                            "pack"
+                          ]
+                        },
+                        "source_row": {
+                          "type": "integer",
+                          "minimum": 1
+                        }
+                      },
+                      "description": "Exact case-sensitive SKU. Pack prices require a positive pack_quantity. moq and moq_basis must be provided together. Runtime validation also enforces unique SKUs, matching currencies/units and positive whole pack quantities where required."
+                    }
+                  },
+                  "selling_prices": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string",
+                      "pattern": "^\\d{1,18}(?:\\.\\d{1,18})?$"
+                    },
+                    "description": "Positive per-base-unit selling prices keyed by exact SKU."
+                  }
+                }
+              },
+              "example": {
+                "old_rows": [
+                  {
+                    "sku": "A-100",
+                    "price": "120",
+                    "currency": "USD",
+                    "price_basis": "pack",
+                    "pack_quantity": "12",
+                    "unit": "each"
+                  }
+                ],
+                "new_rows": [
+                  {
+                    "sku": "A-100",
+                    "price": "120",
+                    "currency": "USD",
+                    "price_basis": "pack",
+                    "pack_quantity": "10",
+                    "unit": "each"
+                  }
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "old_file",
+                  "new_file"
+                ],
+                "properties": {
+                  "old_file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Previous CSV or XLSX snapshot, at most 2 MiB."
+                  },
+                  "new_file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Updated CSV or XLSX snapshot, at most 2 MiB."
+                  },
+                  "config": {
+                    "type": "string",
+                    "description": "JSON configuration with old_mapping, new_mapping, old_defaults, new_defaults, optional worksheet names and selling_prices. See direct integration guide."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comparison result with source-row evidence and externally managed billing metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Request rejected. See the structured error code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Request rejected. See the structured error code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Request rejected. See the structured error code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Operation previously recorded or key reused with different input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request rejected. See the structured error code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Request rejected. See the structured error code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request rejected. See the structured error code.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Backend or BASIC safety limit reached.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Gateway is not configured or processing is unavailable.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "RapidApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-RapidAPI-Key"
+      }
+    }
+  },
+  "security": [
+    {
+      "RapidApiKey": []
+    }
+  ]
+}
