@@ -19,14 +19,19 @@ jobs:
         shell: bash
         run: |
           python3 - <<'PY'
-          import json, urllib.request
+          import json, urllib.request, urllib.error
           endpoint = "https://payloadpier.com/api/mcp"
           def call(method, params, request_id):
               message = {"jsonrpc":"2.0","id":request_id,"method":method,"params":params}
               request = urllib.request.Request(endpoint, data=json.dumps(message).encode(), headers={"Content-Type":"application/json","Accept":"application/json, text/event-stream"}, method="POST")
-              with urllib.request.urlopen(request, timeout=30) as response:
-                  assert response.status == 200
-                  result = json.load(response)
+              try:
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      assert response.status == 200
+                      result = json.load(response)
+              except urllib.error.HTTPError as error:
+                  print("Public discovery failed:", error.code, error.headers.get("Content-Type"))
+                  print(error.read(1500).decode("utf-8", errors="replace"))
+                  raise
               assert "error" not in result, result
               return result["result"]
           initialized = call("initialize", {"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"PayloadPier-registry-check","version":"1.0.0"}}, 1)
