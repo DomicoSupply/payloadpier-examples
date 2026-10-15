@@ -1,0 +1,22 @@
+{
+  "old_rows": [
+    {
+      "sku": "A-100",
+      "price": "120",
+      "currency": "USD",
+      "price_basis": "pack",
+      "pack_quantity": "12",
+      "unit": "each"
+    }
+  ],
+  "new_rows": [
+    {
+      "sku": "A-100",
+      "price": "120",
+      "currency": "USD",
+      "price_basis": "pack",
+      "pack_quantity": "10",
+      "unit": "each"
+    }
+  ]
+}
