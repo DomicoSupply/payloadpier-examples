@@ -1,0 +1,52 @@
+name: Verify and publish PayloadPier MCP
+on:
+  push:
+    branches: [main]
+    paths:
+      - server.json
+      - .github/workflows/publish-mcp.yml
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify public MCP discovery without customer credentials
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request
+          endpoint = "https://payloadpier.com/api/mcp"
+          def call(method, params, request_id):
+              message = {"jsonrpc":"2.0","id":request_id,"method":method,"params":params}
+              request = urllib.request.Request(endpoint, data=json.dumps(message).encode(), headers={"Content-Type":"application/json","Accept":"application/json, text/event-stream"}, method="POST")
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  assert response.status == 200
+                  result = json.load(response)
+              assert "error" not in result, result
+              return result["result"]
+          initialized = call("initialize", {"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"PayloadPier-registry-check","version":"1.0.0"}}, 1)
+          assert initialized["serverInfo"]["name"] == "PayloadPier"
+          tools = call("tools/list", {}, 2)["tools"]
+          names = {tool["name"] for tool in tools}
+          assert {"compare_supplier_prices","get_account_balance"}.issubset(names)
+          print("Public MCP initialize and tools/list passed:", ", ".join(sorted(names)))
+          print("No customer API key, paid tool call or purchase used.")
+          PY
+      - name: Download official publisher and verify checksum
+        shell: bash
+        run: |
+          curl -fsSL --retry 2 -o mcp-publisher_linux_amd64.tar.gz https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz
+          curl -fsSL --retry 2 -o checksums.txt https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/registry_1.8.1_checksums.txt
+          grep ' mcp-publisher_linux_amd64.tar.gz$' checksums.txt | sha256sum --check -
+          tar xzf mcp-publisher_linux_amd64.tar.gz mcp-publisher
+      - name: Validate metadata
+        run: ./mcp-publisher validate server.json
+      - name: Authenticate through GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+      - name: Publish remote server
+        run: ./mcp-publisher publish server.json
