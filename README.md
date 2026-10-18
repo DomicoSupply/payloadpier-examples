@@ -11,6 +11,12 @@ This repository contains public integration examples only. It contains no produc
 - [Marketplace guide](https://payloadpier.com/docs/rapidapi)
 - [Marketplace OpenAPI definition](https://payloadpier.com/api/rapidapi/openapi.json)
 
+## Agent discovery
+
+- [Live access manifest](https://payloadpier.com/api/discovery)
+- [MCP manifest](https://payloadpier.com/server.json)
+- [Agent integration and registry status](DISCOVERY.md)
+
 ## Postman
 
 Import `payloadpier-rapidapi.postman_collection.json`. Subscribe to a RapidAPI plan, then set `rapidapi_key` locally (prefer a private local/Vault value). The published variable is deliberately empty. Do not export or share your populated key.
