@@ -11,6 +11,10 @@ This repository contains public integration examples only. It contains no produc
 - [Marketplace guide](https://payloadpier.com/docs/rapidapi)
 - [Marketplace OpenAPI definition](https://payloadpier.com/api/rapidapi/openapi.json)
 
+## Practical tutorial
+
+[Catch a supplier price increase hidden in a smaller pack](SUPPLIER-PRICE-TUTORIAL.md): a synthetic example, runnable marketplace integration, pricing and limitations.
+
 ## Agent discovery
 
 - [Live access manifest](https://payloadpier.com/api/discovery)
